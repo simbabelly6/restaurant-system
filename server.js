@@ -120,7 +120,7 @@ app.get('/api/qrcodes/print', async (req, res) => {
     if (tables.length === 0) return res.status(404).json({ error: 'No tables found' });
 
     const PDFDocument = require('pdfkit');
-    const doc = new PDFDocument({ autoFirstPage: false, size: [300, 400], margin: 10 });
+    const doc = new PDFDocument({ size: [300, 400], margin: 10 });
     const baseUrl = `${req.protocol}://${req.get('host')}`;
 
     res.setHeader('Content-Type', 'application/pdf');
