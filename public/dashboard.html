@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waiter Dashboard - QR Waiter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <h1>QR Waiter</h1>
+    <div class="nav-links">
+      <a href="/dashboard" class="active">Dashboard</a>
+      <a href="/admin">Admin</a>
+    </div>
+  </div>
+  <div class="container-wide">
+    <div class="dashboard-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-label">Active Requests</div>
+        <div class="stat-value red" id="statActive">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value orange" id="statProgress">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed Today</div>
+        <div class="stat-value green" id="statCompleted">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Requests Today</div>
+        <div class="stat-value blue" id="statToday">0</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-header">
+        <h2>Live Requests</h2>
+        <span id="requestCount" style="font-size:14px;color:var(--gray);">0 active</span>
+      </div>
+      <div class="requests-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Request</th>
+              <th>Time</th>
+              <th>Waiting</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="requestsBody">
+          </tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="loading" style="display:none;">No active requests</div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+  <script>
+    initDashboard();
+  </script>
+</body>
+</html>

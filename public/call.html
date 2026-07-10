@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Call Waiter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="call-page">
+    <div class="call-container" id="callContainer">
+      <div id="requestScreen">
+        <img id="callLogo" class="call-logo" src="" alt="Logo" style="display:none;">
+        <div id="callLogoPlaceholder" class="call-logo-placeholder">QR</div>
+        <p class="call-welcome">Welcome!</p>
+        <p class="call-table" id="tableDisplay">Table <span id="tableNumber"></span></p>
+        <p class="call-subtitle">How can we help you?</p>
+        <div class="call-buttons">
+          <button class="call-btn call-waiter-btn" data-type="waiter" onclick="sendRequest('waiter')">
+            <span class="icon">👨</span>
+            Call Waiter
+          </button>
+          <button class="call-btn" data-type="bill" onclick="sendRequest('bill')">
+            <span class="icon">💳</span>
+            Request Bill
+          </button>
+          <button class="call-btn" data-type="water" onclick="sendRequest('water')">
+            <span class="icon">🥤</span>
+            Need Water
+          </button>
+          <button class="call-btn" data-type="cutlery" onclick="sendRequest('cutlery')">
+            <span class="icon">🍴</span>
+            Need Cutlery
+          </button>
+        </div>
+      </div>
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Your request has been sent.</div>
+        <div class="success-subtitle">A waiter will assist you shortly.</div>
+        <div class="countdown-timer" id="countdownTimer">⏱️ You can request again in <span id="countdownSeconds">30</span>s</div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const table = parseInt(params.get('table')) || 0;
+
+    if (!table) {
+      document.getElementById('tableDisplay').textContent = 'Invalid Table';
+      document.querySelectorAll('.call-btn').forEach(b => b.disabled = true);
+    } else {
+      document.getElementById('tableNumber').textContent = table;
+      loadSettings();
+    }
+  </script>
+</body>
+</html>

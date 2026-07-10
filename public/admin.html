@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - QR Waiter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <h1>QR Waiter</h1>
+    <div class="nav-links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/admin" class="active">Admin</a>
+    </div>
+  </div>
+  <div class="container-wide">
+
+    <ul style="display:flex;gap:8px;list-style:none;margin-bottom:20px;flex-wrap:wrap;" class="admin-tabs">
+      <li><button class="btn btn-sm btn-primary" onclick="showTab('tables')">Tables & QR</button></li>
+      <li><button class="btn btn-sm btn-outline" onclick="showTab('settings')">Settings</button></li>
+      <li><button class="btn btn-sm btn-outline" onclick="showTab('history')">History</button></li>
+      <li><button class="btn btn-sm btn-outline" onclick="showTab('stats')">Statistics</button></li>
+    </ul>
+
+    <div id="tabTables" class="admin-tab">
+      <div class="admin-grid">
+        <div class="card">
+          <h2 style="font-size:18px;font-weight:600;margin-bottom:16px;">Add Tables</h2>
+          <div class="form-group">
+            <label>Single Table Number</label>
+            <div style="display:flex;gap:8px;">
+              <input type="number" id="singleTableNum" min="1" placeholder="e.g. 15" style="flex:1;">
+              <button class="btn btn-primary btn-sm" onclick="addSingleTable()">Add</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Batch Add (range)</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="number" id="batchStart" min="1" placeholder="From" style="width:100px;">
+              <span>to</span>
+              <input type="number" id="batchEnd" min="1" placeholder="To" style="width:100px;">
+              <button class="btn btn-primary btn-sm" onclick="addBatchTables()">Add Range</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2 style="font-size:18px;font-weight:600;margin-bottom:16px;">QR Code Actions</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <button class="btn btn-outline btn-sm" onclick="downloadAllQR()">Download All QR (ZIP)</button>
+            <button class="btn btn-outline btn-sm" onclick="printAllQR()">Print QR Codes</button>
+          </div>
+          <div id="qrPreview" style="margin-top:16px;display:none;text-align:center;">
+            <img id="qrPreviewImg" src="" alt="QR Code" style="max-width:200px;">
+            <p id="qrPreviewLabel" style="font-size:14px;font-weight:600;margin-top:8px;"></p>
+            <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;">
+              <a id="qrDownloadLink" class="btn btn-sm btn-outline" download>Download PNG</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <div class="card-header">
+          <h2>Tables</h2>
+          <span id="tableCount" style="font-size:14px;color:var(--gray);"></span>
+        </div>
+        <div class="table-list" id="tableList"></div>
+      </div>
+    </div>
+
+    <div id="tabSettings" class="admin-tab" style="display:none;">
+      <div class="card">
+        <h2 style="font-size:18px;font-weight:600;margin-bottom:16px;">Restaurant Settings</h2>
+        <div class="form-group">
+          <label>Restaurant Name</label>
+          <input type="text" id="restName">
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" id="restAddress">
+        </div>
+        <div class="color-row">
+          <div class="form-group">
+            <label>Primary Color</label>
+            <input type="color" id="primaryColor">
+          </div>
+          <div class="form-group">
+            <label>Accent Color</label>
+            <input type="color" id="accentColor">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Restaurant Logo</label>
+          <input type="file" id="logoUpload" accept="image/*">
+          <div id="logoPreview" style="margin-top:8px;"></div>
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+
+    <div id="tabHistory" class="admin-tab" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <h2>Request History</h2>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
+            <button class="btn btn-sm btn-outline" onclick="exportPDF()">Export PDF</button>
+          </div>
+        </div>
+        <div class="filters-bar">
+          <div class="form-group">
+            <label>Search</label>
+            <input type="text" id="histSearch" placeholder="Table or type..." oninput="loadHistory()">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="histType" onchange="loadHistory()">
+              <option value="">All</option>
+              <option value="waiter">Waiter</option>
+              <option value="bill">Bill</option>
+              <option value="water">Water</option>
+              <option value="cutlery">Cutlery</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>From</label>
+            <input type="date" id="histDateFrom" onchange="loadHistory()">
+          </div>
+          <div class="form-group">
+            <label>To</label>
+            <input type="date" id="histDateTo" onchange="loadHistory()">
+          </div>
+        </div>
+        <div class="requests-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Table</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Accepted</th>
+                <th>Completed</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+        <div id="historyPagination" style="display:flex;justify-content:center;gap:8px;margin-top:16px;"></div>
+      </div>
+    </div>
+
+    <div id="tabStats" class="admin-tab" style="display:none;">
+      <div class="dashboard-grid" id="statsCards">
+        <div class="stat-card"><div class="stat-label">Requests Today</div><div class="stat-value blue" id="statRequestsToday">0</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Response Time</div><div class="stat-value blue" id="statAvgResponse">0s</div></div>
+        <div class="stat-card"><div class="stat-label">Active Requests</div><div class="stat-value red" id="statActiveReqs">0</div></div>
+        <div class="stat-card"><div class="stat-label">Completed Today</div><div class="stat-value green" id="statCompletedReqs">0</div></div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3>Requests per Hour</h3>
+          <div id="chartHourly"></div>
+        </div>
+        <div class="chart-container">
+          <h3>Average Wait Time by Hour</h3>
+          <div id="chartWaitTime"></div>
+        </div>
+        <div class="chart-container">
+          <h3>Daily Activity (Last 7 Days)</h3>
+          <div id="chartDaily"></div>
+        </div>
+        <div class="chart-container">
+          <h3>Most Requested Services</h3>
+          <div id="chartServices"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="script.js"></script>
+  <script>
+    initAdmin();
+  </script>
+</body>
+</html>
